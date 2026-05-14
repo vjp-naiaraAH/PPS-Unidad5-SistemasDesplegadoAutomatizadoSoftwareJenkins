@@ -49,24 +49,146 @@ Lo guardo en el botón inferior que pone <Save>
 
 img4-> 
 4. Ahora lo ejecuto pulsando el botón **Build now** como se ve en la captura
+En la parte inferior izquierda pone el resultado dinal de la ejecución, en mi caso es correcta.
 
-img5->
+ANÁLISIS DE LA EJECUCIÓN
+INFORMACIÓN DE TAREAS
+img5-> Veo el console output ya que es la información en el terminal que producen la ejecución del build. Podemos copiarlo y descargarlo si es necesario.
 
-img6->
+DEPURAR ERRORES EN BUILD
+Voy a modificar el Pipeline para ver cómo se tratan y depuran los errores.
 
-img7->
+img6-> lo que hago ahora es cambiar el script por el que pone en la tarea:
+```jenkinsfile
+pipeline {
+    agent any
+    stages {
+        stage('Clonar repositorio') {
+            steps {
+                git branch: 'main',
+                    credentialsId: 'TuIDToken', // Tu ID definido en Jenkins
+                    url: 'https://github.com/PPSvjpOrganizacion/StoreAPP-TuNombre'
+            }
+        }
+        stage('Verificar contenido') {
+            steps {
+                sh 'echo "Repositorio clonado correctamente"'
+                sh 'pwd'
+                sh 'ls -la'
+                sh 'git branch -a'
+            }
+        }
+        stage('Build con Maven') {
+            steps {
+                withEnv(["JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64","PATH+JAVA=/usr/lib/jvm/java-11-openjdk-amd64/bin"]) {
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+    }
+}
+```
+ Cuando copie esto lo que hago es borrar uno de los } finales para simular un error.
 
-img8->
+img7-> Ahora al ejecutarlo dará un error como se ve en la siguiente captura
 
-img9->
+img8-> Clic sobre el build que acabo de hacer -> Console Output y ahí da que tengo un error 
 
-img10->
+img9-> Vuelvo a añadir al script el } que eliminé al final, y vuelvo a lanzarlo, dará otro fallo que es el que se ve a continuación:
 
-img11->
 
-img12->
+img10-> Una vez corregido y puesto bien el script ya dará que está bien
 
-img13->
+Naiara Aguado Hernández <naguadoh01@informatica.iesvalledeljerteplasencia.es>
+18:48 (hace 0 minutos)
+para mí
+
+CORREGIDO
+pipeline {
+    agent any
+
+    stages {
+        stage('Clonar repositorio') {
+            steps {
+                git(
+                    branch: 'main',
+                    credentialsId: 'b80b0d16-2974-4c29-8ff5-6434d9c184f8',
+                    url: 'https://github.com/vjp-naiaraAH/PPS-Unidad5-SistemasDesplegadoAutomatizadoSoftwareJenkins.git'
+                )
+            }
+        }
+
+        stage('Verificar contenido') {
+            steps {
+                sh 'echo "Repositorio clonado correctamente"'
+                sh 'pwd'
+                sh 'ls -la'
+                sh 'ls -la store-app'
+            }
+        }
+
+        stage('Build con Maven') {
+            steps {
+                dir('store-app') {
+                    withEnv([
+                        "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64",
+                        "PATH+JAVA=/usr/lib/jvm/java-11-openjdk-amd64/bin"
+                    ]) {
+                        sh 'mvn clean package -DskipTests'
+                    }
+                }
+            }
+        }
+    }
+}    EL SIN CORREGIR pipeline {
+    agent any
+
+    stages {
+        stage('Clonar repositorio') {
+            steps {
+                git(
+                    branch: 'main',
+                    credentialsId: 'b80b0d16-2974-4c29-8ff5-6434d9c184f8',
+                    url: 'https://github.com/vjp-naiaraAH/PPS-Unidad5-SistemasDesplegadoAutomatizadoSoftwareJenkins.git'
+                )
+            }
+        }
+
+        stage('Verificar contenido') {
+            steps {
+                sh 'echo "Repositorio clonado correctamente"'
+                sh 'pwd'
+                sh 'ls -la'
+                sh 'ls -la store-app'
+            }
+        }
+
+        stage('Build con Maven') {
+            steps {
+                dir('store-app') {
+                    withEnv([
+                        "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64",
+                        "PATH+JAVA=/usr/lib/jvm/java-11-openjdk-amd64/bin"
+                    ]) {
+                        sh 'mvn clean package -DskipTests'
+                    }
+                }
+            }
+        }
+    }
+} parar a chati para q me diga que he corregido
+Una vez compilado el proyecto se tiene que haber generado nuestra aplicación .jar en java.
+
+img11-> Cuando finaliza vemos que ha finalizado también con error. Para ver el error nos vamos a Pipeline Overview y vemos como los todos los stages Clonar repositorio, verificar contenido y compilar con maven se han realizado correctamente.
+Puedes ver la información generada durante la ejecución de cualquiera de las tres etapas:
+
+img12->Vamos a inspeccionar los archivos en nuestro área de trabajo: StoreAPP-PPSvjp -> nº Build -> Workspace:
+
+
+img13->Pulsa en el enlace del directorio de trabajo.
+
+
+Observa cómo se muestran todos los archivos de dicho directorio y puedes moverte entre esos directorios y deescargar los archivos que necesites, incluso descargarte el directorio comprimido .zip.
 
 img14->
 
