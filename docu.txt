@@ -1,0 +1,75 @@
+CREAR PRIMER PROYECTO: CLONAR EL REPOSITORIO
+img1-> Una vez ya tengo instalado Jenkins y le añado la clave de Github tal y como dejamos todo en clase lo siguiente que hay que hacer es entrar en la propia herramienta de Jenkins y  crear el primer proyecto clonando el repositorio.
+Para ello
+1. Vuelvo a la página principal y pulso sobre <New Item>
+
+img2-> 
+2. A continuación le doy un nombre, en mi caso <storeApp-naiara>, selecciono un tipo que será el indicado en la tarea, es decir <Pipeline> y acepto.
+
+img3-> 
+3. Se abre una nueva pestaña en la que pongo en la apartado de script el siguiente:
+```jenkinsfile
+pipeline {
+    agent any  // Indica que Jenkins puede ejecutar este pipeline en cualquier nodo disponible
+
+    stages {   // Bloque que agrupa las distintas fases del proceso (pipeline)
+
+        stage('Clonar repositorio') {  // Primera fase: descargar el código fuente
+            steps {  // Conjunto de acciones que se ejecutan dentro de este stage
+
+                // Clona el repositorio Git especificado
+                // - branch: rama que se va a descargar
+                // - url: dirección del repositorio
+                git branch: 'main',
+                    credentialsId: 'TuIDToken', // Tu ID definido en Jenkins
+                    url: 'https://github.com/TU_USUARIO/store-app.git'
+            }
+        }
+
+        stage('Verificar contenido') {  // Segunda fase: comprobar que todo se ha clonado bien
+            steps {
+
+                // Muestra un mensaje en consola
+                sh 'echo "Repositorio clonado correctamente"'
+
+                // Muestra el directorio actual de trabajo
+                sh 'pwd'
+
+                // Lista los archivos del directorio con detalle
+                sh 'ls -la'
+
+                // Muestra las ramas disponibles en el repositorio
+                sh 'git branch -a'
+            }
+        }
+    }
+}
+```
+Lo guardo en el botón inferior que pone <Save>
+
+img4-> 
+4. Ahora lo ejecuto pulsando el botón **Build now** como se ve en la captura
+
+img5->
+
+img6->
+
+img7->
+
+img8->
+
+img9->
+
+img10->
+
+img11->
+
+img12->
+
+img13->
+
+img14->
+
+img15->
+
+img16->
